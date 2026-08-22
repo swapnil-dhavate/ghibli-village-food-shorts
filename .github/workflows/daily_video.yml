@@ -1,0 +1,53 @@
+name: Daily Ghibli Village Food Short
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # 05:00 UTC daily -- adjust to taste
+  workflow_dispatch: {}     # lets you trigger a run manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline (pick dish -> story -> images -> video -> upload)
+        working-directory: scripts
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python run_pipeline.py
+
+      - name: Upload video as workflow artifact (backup)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-video-${{ github.run_id }}
+          path: work/
+          retention-days: 14
+
+      - name: Commit updated dish rotation state
+        run: |
+          git config user.name "ghibli-village-bot"
+          git config user.email "actions@github.com"
+          git add data/state/used_dishes.json
+          git diff --cached --quiet || git commit -m "chore: update dish rotation state [skip ci]"
+          git push

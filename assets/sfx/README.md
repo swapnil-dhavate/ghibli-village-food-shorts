@@ -1,0 +1,42 @@
+# ASMR sound effects (you need to add these once)
+
+`assemble_video.py` looks for a file named `<tag>.mp3` in this folder for each audio tag the
+day's story uses. If a file is missing it silently falls back to silence for that scene and
+prints a warning — the pipeline still runs, it just won't have that sound.
+
+Add mp3 files with these exact names (loopable, a few seconds to ~30s each is enough since
+they get looped/trimmed to each scene's length):
+
+```
+rain.mp3
+birds.mp3
+river.mp3
+wind_leaves.mp3
+footsteps_wet_soil.mp3
+chopping.mp3
+grinding_stone.mp3
+water_pouring.mp3
+rice_washing.mp3
+dough_kneading.mp3
+oil_sizzling.mp3
+clay_pot_boiling.mp3
+wooden_spoon_stirring.mp3
+fire_crackling.mp3
+utensil_clinks.mp3
+banana_leaf.mp3
+steam.mp3
+eating_ambience.mp3
+```
+
+## Where to get them for free
+
+These are one-time manual downloads (not something to automate/scrape) — check each clip's
+license before use:
+
+- https://freesound.org — huge library, many CC0 (no attribution needed) clips; filter by
+  license.
+- https://pixabay.com/sound-effects/ — royalty-free, no attribution required.
+- https://mixkit.co/free-sound-effects/ — free for any use, no attribution required.
+
+Search each site for the tag name (e.g. "rain loop", "chopping vegetables", "fire crackling")
+and drop the downloaded file into this folder with the matching name above.

@@ -1,0 +1,5 @@
+work/
+__pycache__/
+*.pyc
+.env
+_smoketest_work/
