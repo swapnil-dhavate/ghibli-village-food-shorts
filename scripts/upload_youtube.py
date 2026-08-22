@@ -14,7 +14,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 TOKEN_URI = "https://oauth2.googleapis.com/token"
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = ["https://www.googleapis.com/auth/youtube"]
 
 
 def get_credentials():
