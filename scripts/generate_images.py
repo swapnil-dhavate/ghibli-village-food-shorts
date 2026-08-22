@@ -18,8 +18,12 @@ POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
 
 
 def build_full_prompt(scene):
-    avoid = scene["negative_prompt"]
-    return f"{scene['image_prompt']} Avoid: {avoid}."
+    # Pollinations' flux backend only reliably attends to roughly the first ~300 characters
+    # of a prompt -- appending the long negative-prompt text pushes real subject content out
+    # of that window and the model falls back to a generic background. Rely on the (short,
+    # front-loaded) positive image_prompt alone; negative_prompt is kept on the scene for
+    # documentation / other tools but intentionally not sent here.
+    return scene["image_prompt"]
 
 
 def generate_image(scene, width, height, seed, model, out_path, max_retries=4):

@@ -15,7 +15,7 @@ import requests
 from constants import ART_STYLE, CHARACTER_BIBLE, ENVIRONMENT_RULES, KNOWN_AUDIO_TAGS, NEGATIVE_PROMPT
 
 ROOT = Path(__file__).resolve().parent.parent
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 GEMINI_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 )
@@ -58,22 +58,33 @@ no narration, no on-screen text.
 DISH: {dish['name']} ({dish['region']})
 WEATHER (keep identical across all scenes): {dish['weather']}
 
-CHARACTER BIBLE (use this exact family in every image_prompt, described in full each time):
+FULL CHARACTER BIBLE (for your own reference -- do NOT restate all of this in every
+image_prompt, see rules below):
 {CHARACTER_BIBLE}
 
-ART STYLE (include in every image_prompt): {ART_STYLE}
+ART STYLE (for your own reference): {ART_STYLE}
 
 ENVIRONMENT RULES (must hold in every scene): {ENVIRONMENT_RULES}
 
 Write exactly {scene_count} scenes covering, in order: harvesting/gathering the ingredients,
 traditional cooking over a clay stove, and the family serving and eating together with warm
-emotional expressions. Each image_prompt must be a fully independent, self-contained prompt
-(never say "same as previous scene") that restates the relevant characters, the weather, the
-art style, and the food/cooking details for that moment, plus a camera angle. character_actions
-must describe only visual actions (no dialogue). audio_tags must be chosen from the allowed
-enum and should match what's happening in that scene (e.g. chopping while cutting vegetables,
-oil_sizzling while frying). camera_motion should vary across scenes rather than repeating the
-same one every time.
+emotional expressions. character_actions must describe only visual actions (no dialogue).
+audio_tags must be chosen from the allowed enum and should match what's happening in that
+scene (e.g. chopping while cutting vegetables, oil_sizzling while frying). camera_motion
+should vary across scenes rather than repeating the same one every time.
+
+CRITICAL image_prompt RULES -- the image generator only reliably renders roughly the first
+250-300 characters of a prompt, so every image_prompt MUST:
+1. Be a single flowing sentence of AT MOST 320 characters total.
+2. Start with the 2-3 word style anchor "Studio Ghibli anime style," followed IMMEDIATELY by
+   the subject and action (who is doing what) -- never open with atmosphere/lighting/scenery.
+3. Mention ONLY the 1-2 characters actually doing something in that specific scene (not the
+   whole family) unless it's the final group-eating scene, and describe each in no more than
+   6-8 words (e.g. "a 35-year-old Indian father in a cotton dhoti" not the full character
+   bible entry).
+4. End with at most one short clause for weather/setting (e.g. "in a rainy mud-house
+   courtyard") -- do not list camera angle, negative prompts, or long style adjective lists.
+Every image_prompt must still be fully independent (never say "same as previous scene").
 
 Also write a YouTube Shorts video_title (include the dish name and the word Shorts or #Shorts),
 a short video_description (1-3 sentences, no dialogue quoted, mention it's a wordless ASMR
@@ -108,7 +119,7 @@ def generate_story(dish, scene_count, max_retries=3):
             for scene in story["scenes"]:
                 scene["negative_prompt"] = NEGATIVE_PROMPT
             return story
-        except Exception as exc:  # noqa: BLE001 - broad on purpose, we retry then re-raise
+        except Exception as exc:  # noqa: BLE001
             last_error = exc
             time.sleep(5 * attempt)
 

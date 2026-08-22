@@ -3,6 +3,7 @@ video -> upload to YouTube. Called by .github/workflows/daily_video.yml, or manu
 """
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -11,7 +12,6 @@ from pick_dish import pick_next_dish
 from generate_story import generate_story
 from generate_images import generate_all_images
 from assemble_video import assemble
-from upload_youtube import upload_video
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -47,6 +47,12 @@ def main():
         config["resolution"]["width"], config["resolution"]["height"], video_path,
     )
     print(f"[run_pipeline] video ready: {video_path}", file=sys.stderr)
+
+    if os.environ.get("SKIP_YOUTUBE_UPLOAD") == "1":
+        print(f"[run_pipeline] SKIP_YOUTUBE_UPLOAD=1 set, not uploading. Done: {video_path}")
+        return str(video_path)
+
+    from upload_youtube import upload_video
 
     print(f"[run_pipeline] uploading to YouTube (privacy={config['youtube_privacy_status']})...", file=sys.stderr)
     result = upload_video(str(video_path), story, config["youtube_privacy_status"], config["youtube_category_id"])
