@@ -1,5 +1,14 @@
 {
   "cycle": 1,
-  "used_ids": [],
-  "history": []
+  "used_ids": [
+    "vadapav"
+  ],
+  "history": [
+    {
+      "id": "vadapav",
+      "name": "Vadapav",
+      "cycle": 1,
+      "picked_at": "2026-08-22T08:58:09.905075+00:00"
+    }
+  ]
 }
