@@ -5,7 +5,8 @@ Every day, GitHub Actions:
 2. Asks Gemini (free tier) to write a wordless, scene-by-scene story + image prompts for a vertical Studio Ghibli-style ASMR short, using a fixed character bible (`scripts/constants.py`) for consistency.
 3. Generates one still image per scene via Pollinations.ai (free, no key).
 4. Assembles a vertical video with ffmpeg: Ken Burns pan/zoom per scene, crossfade transitions, and an ASMR sound bed mixed from `assets/sfx/`.
-5. Uploads the result to your YouTube channel via the Data API v3.
+5. Publishes the result **publicly** to your YouTube channel via the Data API v3, automatically,
+   no human review. Runs daily at 03:30 UTC (09:00 IST).
 
 ## Known limitations (read before you trust the output)
 
@@ -16,9 +17,12 @@ Every day, GitHub Actions:
   bible in words, which is the only real lever without a trained LoRA (that needs a GPU to
   train). Expect the family to look *similar*, not pixel-identical, across scenes.
 - **YouTube policy risk.** A channel publishing daily, fully AI-generated, zero human review can
-  read as "reused/repetitious content" to YouTube's spam policies. `config.json` defaults
-  `youtube_privacy_status` to `"unlisted"` on purpose — watch the first several runs yourself
-  before flipping it to `"public"`.
+  read as "reused/repetitious content" to YouTube's spam policies. `config.json` currently sets
+  `youtube_privacy_status` to `"public"` -- every day's video goes live automatically with no
+  review step. Set it back to `"unlisted"` if you want to review before publishing again.
+- **QC isn't perfect.** The Gemini vision QC step catches many off-prompt image renders and
+  retries with a new seed, but it isn't guaranteed to catch everything within the retry budget
+  -- an occasional published video may still have a rough scene.
 - **Free-tier quotas.** Gemini's free tier and Pollinations.ai both have rate limits. One run/day
   should comfortably fit; don't lower the cron interval without checking quotas.
 
@@ -58,8 +62,9 @@ Push this repo to GitHub, then check the **Actions** tab is enabled. Use **Run w
 
 ## Tuning
 - `config.json`: `scene_count`, `video_duration_seconds`, output resolution, image model,
-  and `youtube_privacy_status` (flip to `"public"` once you're happy with quality).
-- `.github/workflows/daily_video.yml`: cron schedule (`0 5 * * *` = 05:00 UTC daily).
+  and `youtube_privacy_status` (currently `"public"` -- set to `"unlisted"` to go back to
+  manual review before publishing).
+- `.github/workflows/daily_video.yml`: cron schedule (`30 3 * * *` = 03:30 UTC = 09:00 IST daily).
 - `data/dish_catalog.json`: add more dishes any time to extend the no-repeat rotation.
 
 ## Local testing

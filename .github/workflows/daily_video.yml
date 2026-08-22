@@ -2,7 +2,7 @@ name: Daily Ghibli Village Food Short
 
 on:
   schedule:
-    - cron: "0 5 * * *"   # 05:00 UTC daily -- adjust to taste
+    - cron: "30 3 * * *"   # 03:30 UTC = 09:00 IST daily -- adjust to taste (cron is always UTC)
   workflow_dispatch: {}     # lets you trigger a run manually from the Actions tab
 
 permissions:

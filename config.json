@@ -2,8 +2,8 @@
   "video_duration_seconds": 28,
   "scene_count": 4,
   "resolution": { "width": 1080, "height": 1920 },
-  "youtube_privacy_status": "unlisted",
+  "youtube_privacy_status": "public",
   "youtube_category_id": "26",
   "image_model": "flux",
-  "comment": "youtube_privacy_status starts as 'unlisted' on purpose so you can review the first several runs before flipping it to 'public'. scene_count x ~7s scenes should land inside video_duration_seconds."
+  "comment": "youtube_privacy_status is 'public' -- every daily video publishes automatically with no manual review. scene_count x ~7s scenes should land inside video_duration_seconds."
 }
