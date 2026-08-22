@@ -17,7 +17,11 @@ from pathlib import Path
 import requests
 
 POLLINATIONS_BASE = "https://image.pollinations.ai/prompt"
-GEMINI_VISION_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+# Deliberately a DIFFERENT model from generate_story.py's GEMINI_MODEL -- each Gemini free-tier
+# model has its own separate daily request quota (discovered empirically: gemini-3.6-flash caps
+# at just 20 requests/day on the free tier). Routing the many small QC checks to a lighter model
+# keeps them off the story-generation model's quota entirely.
+GEMINI_VISION_MODEL = os.environ.get("GEMINI_QC_MODEL", "gemini-3.5-flash-lite")
 QC_MAX_ATTEMPTS = 3
 
 

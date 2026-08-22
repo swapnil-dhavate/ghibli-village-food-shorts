@@ -81,11 +81,20 @@ CRITICAL image_prompt RULES -- the image generator only reliably renders roughly
    atmosphere/lighting/scenery. (Testing showed this anchor renders far more reliably than
    "Studio Ghibli anime style" on the free image backend, which tends to drift into
    photorealistic/3D-render looks instead -- do not change this anchor without re-testing.)
-3. Mention ONLY the 1-2 characters actually doing something in that specific scene (not the
-   whole family) unless it's the final group-eating scene, and describe each in no more than
-   6-8 words (e.g. "a 35-year-old Indian father in a cotton dhoti" not the full character
-   bible entry).
-4. End with at most one short clause for weather/setting (e.g. "in a rainy mud-house
+3. Mention ONLY 1-2 characters actually doing something in that specific scene, INCLUDING
+   the final scene -- never describe the whole 5-person family in one image_prompt, even
+   though the scene conceptually is a family meal. Pick the 2 most relevant family members
+   for the final image_prompt (e.g. "a father and his young daughter sharing food together");
+   character_actions can still describe the full family in prose for flavor/audio purposes,
+   that's fine, just not in image_prompt. Describe each character in no more than 6-8 words
+   (e.g. "a 35-year-old Indian father in a cotton dhoti" not the full character bible entry).
+4. Prefer simple, common, single-step actions the image generator has actually seen a lot of
+   (kneading dough, stirring a pot, pouring water, serving food, eating, smiling at each
+   other) over rare/specific compound actions (e.g. avoid "rotating a stone mill while
+   someone else pours grain into it" -- pick one simple visual moment from that instead, like
+   "grinding grain with a stone mill"). Simpler single-action prompts render far more reliably
+   than multi-step or unusual-tool ones on this free image backend.
+5. End with at most one short clause for weather/setting (e.g. "in a rainy mud-house
    courtyard") -- do not list camera angle, negative prompts, or long style adjective lists.
 Every image_prompt must still be fully independent (never say "same as previous scene").
 
