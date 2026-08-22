@@ -76,8 +76,11 @@ should vary across scenes rather than repeating the same one every time.
 CRITICAL image_prompt RULES -- the image generator only reliably renders roughly the first
 250-300 characters of a prompt, so every image_prompt MUST:
 1. Be a single flowing sentence of AT MOST 320 characters total.
-2. Start with the 2-3 word style anchor "Studio Ghibli anime style," followed IMMEDIATELY by
-   the subject and action (who is doing what) -- never open with atmosphere/lighting/scenery.
+2. Start with the style anchor "Flat 2D children's book illustration style, warm colors,"
+   followed IMMEDIATELY by the subject and action (who is doing what) -- never open with
+   atmosphere/lighting/scenery. (Testing showed this anchor renders far more reliably than
+   "Studio Ghibli anime style" on the free image backend, which tends to drift into
+   photorealistic/3D-render looks instead -- do not change this anchor without re-testing.)
 3. Mention ONLY the 1-2 characters actually doing something in that specific scene (not the
    whole family) unless it's the final group-eating scene, and describe each in no more than
    6-8 words (e.g. "a 35-year-old Indian father in a cotton dhoti" not the full character

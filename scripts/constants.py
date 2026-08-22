@@ -17,10 +17,12 @@ DAUGHTER: 6-year-old girl, long braided hair, traditional frock or lehenga, happ
 innocent expression.
 """
 
+# NOTE: "Studio Ghibli anime style" tested poorly on the free image backend (drifts into
+# photorealistic/3D-render looks instead of illustration). "Flat 2D children's book
+# illustration style" tested reliably better -- see generate_story.py's build_prompt rule 2.
 ART_STYLE = (
-    "Studio Ghibli-style hand-drawn animated film still, soft painterly background, "
-    "hand-painted textures, organic brush strokes, warm cinematic lighting, rich greenery, "
-    "vibrant yet natural colors, magical realism, cozy countryside atmosphere, highly detailed, "
+    "flat 2D children's book illustration style, warm colors, soft painterly background, "
+    "rich greenery, vibrant yet natural colors, cozy countryside atmosphere, highly detailed, "
     "no CGI sheen, no 3D render look, no photorealism"
 )
 
