@@ -2,7 +2,8 @@
   "cycle": 1,
   "used_ids": [
     "vadapav",
-    "litti_chokha"
+    "litti_chokha",
+    "dhokla"
   ],
   "history": [
     {
@@ -16,6 +17,12 @@
       "name": "Litti Chokha",
       "cycle": 1,
       "picked_at": "2026-08-23T04:10:34.144830+00:00"
+    },
+    {
+      "id": "dhokla",
+      "name": "Dhokla",
+      "cycle": 1,
+      "picked_at": "2026-08-24T04:22:42.878763+00:00"
     }
   ]
 }
