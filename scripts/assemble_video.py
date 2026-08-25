@@ -232,15 +232,17 @@ def compute_scene_starts(clip_durations):
 
 
 def _escape_drawtext(text):
-    # ffmpeg drawtext's text= value has its own escaping rules (colon/quote/percent/backslash
-    # are all meaningful) -- a raw title/narration containing any of these would otherwise
-    # either break the filter or get silently mangled.
-    return (
-        text.replace("\\", "\\\\")
-        .replace(":", "\\:")
-        .replace("'", "\\'")
-        .replace("%", "\\%")
-    )
+    # ffmpeg drawtext's text= value (wrapped in single quotes at the call site) still needs
+    # colons backslash-escaped even inside the quotes. A literal single quote is the one
+    # character with NO working escape inside a quoted value -- verified directly that every
+    # backslash-escape variant either broke the whole filtergraph or silently swallowed
+    # everything after it into the text value (production crash: real narration containing
+    # "Earth's" broke parsing). Fix: swap it for the Unicode right single quote (U+2019),
+    # which isn't a quote delimiter to ffmpeg's parser at all -- also reads as more
+    # typographically correct in a rendered caption. % needs no escaping as long as the
+    # call site also sets expansion=none (disables drawtext's own %{...} text-expansion
+    # syntax, which a backslash-escaped % does NOT survive -- verified separately).
+    return text.replace("'", "’").replace("\\", "\\\\").replace(":", "\\:")
 
 
 def _fit_font_size(text, max_width_px, font_path, max_size=58, min_size=28, step=2):
@@ -312,7 +314,7 @@ def add_title_hook(video_in, video_title, width, out_path):
     )
     vf = (
         f"drawtext=fontfile={HOOK_FONT_FILE}:text='{escaped}':fontsize={fontsize}:fontcolor=white:"
-        f"box=1:boxcolor=black@0.45:boxborderw=24:x=(w-text_w)/2:y=140:"
+        f"box=1:boxcolor=black@0.45:boxborderw=24:x=(w-text_w)/2:y=140:expansion=none:"
         f"enable='lte(t,{HOOK_SECONDS})':alpha='{fade_expr}'"
     )
     run(["ffmpeg", "-y", "-i", str(video_in), "-vf", vf, str(out_path)])
@@ -332,7 +334,7 @@ def burn_captions(video_in, scenes, scene_starts, clip_durations, width, out_pat
         parts.append(
             f"drawtext=fontfile={HOOK_FONT_FILE}:text='{escaped}':fontsize={CAPTION_FONT_SIZE}:"
             f"fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=18:x=(w-text_w)/2:y=h-380:"
-            f"line_spacing=6:enable='between(t,{cap_start:.3f},{cap_end:.3f})'"
+            f"line_spacing=6:expansion=none:enable='between(t,{cap_start:.3f},{cap_end:.3f})'"
         )
     vf = ",".join(parts)
     run(["ffmpeg", "-y", "-i", str(video_in), "-vf", vf, str(out_path)])
