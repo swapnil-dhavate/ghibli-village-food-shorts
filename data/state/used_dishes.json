@@ -5,7 +5,8 @@
     "litti_chokha",
     "dhokla",
     "appam_stew",
-    "makki_di_roti_sarson"
+    "makki_di_roti_sarson",
+    "pakhala_bhata"
   ],
   "history": [
     {
@@ -37,6 +38,12 @@
       "name": "Makki di Roti with Sarson da Saag",
       "cycle": 1,
       "picked_at": "2026-08-25T09:13:47.135942+00:00"
+    },
+    {
+      "id": "pakhala_bhata",
+      "name": "Pakhala Bhata",
+      "cycle": 1,
+      "picked_at": "2026-08-25T09:40:56.616056+00:00"
     }
   ]
 }
