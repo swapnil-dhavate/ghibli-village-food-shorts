@@ -6,7 +6,8 @@
     "dhokla",
     "appam_stew",
     "makki_di_roti_sarson",
-    "pakhala_bhata"
+    "pakhala_bhata",
+    "bamboo_shoot_curry"
   ],
   "history": [
     {
@@ -44,6 +45,12 @@
       "name": "Pakhala Bhata",
       "cycle": 1,
       "picked_at": "2026-08-25T09:40:56.616056+00:00"
+    },
+    {
+      "id": "bamboo_shoot_curry",
+      "name": "Bamboo Shoot Curry (Eromba)",
+      "cycle": 1,
+      "picked_at": "2026-08-25T09:53:12.488906+00:00"
     }
   ]
 }
