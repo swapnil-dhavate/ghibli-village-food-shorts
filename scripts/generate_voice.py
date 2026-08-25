@@ -6,8 +6,12 @@ time for a 7s clip on ordinary CPU, most of which is one-time model load). This 
 makes "FREE TTS" in the new architecture actually free rather than gated like every hosted
 TTS API turned out to be (see generate_images.py's kontext notes for that same pattern).
 
-The voice model (assets/voices/en_US-lessac-medium.onnx + .json) is committed to the repo
-so runs don't depend on Hugging Face being reachable every single day.
+Voice models are committed to assets/voices/ so runs don't depend on Hugging Face being
+reachable every single day. Default is the Hindi voice (hi_IN-priyamvada, medium quality --
+the only quality tier Piper currently ships for Hindi; two other Hindi speakers, pratham and
+rohan, are available at the same tier if this one doesn't sound right -- see
+https://huggingface.co/rhasspy/piper-voices/tree/main/hi/hi_IN). The English model
+(en_US-lessac-medium) is kept in the repo unused, for easy rollback.
 """
 
 import json
@@ -18,8 +22,8 @@ from pathlib import Path
 from piper import PiperVoice
 
 ROOT = Path(__file__).resolve().parent.parent
-VOICE_MODEL = ROOT / "assets" / "voices" / "en_US-lessac-medium.onnx"
-VOICE_CONFIG = ROOT / "assets" / "voices" / "en_US-lessac-medium.onnx.json"
+VOICE_MODEL = ROOT / "assets" / "voices" / "hi_IN-priyamvada-medium.onnx"
+VOICE_CONFIG = ROOT / "assets" / "voices" / "hi_IN-priyamvada-medium.onnx.json"
 
 _voice = None
 

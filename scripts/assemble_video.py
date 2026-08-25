@@ -21,7 +21,11 @@ PADDING_SECONDS = 1.2  # added to each scene's own narration length to get its c
 MIN_SCENE_SECONDS = 3.0  # floor, in case a scene's narration is unusually short
 SFX_VOLUME = 0.22
 MUSIC_VOLUME = 0.14
-HOOK_FONT_FILE = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+# DejaVu Sans has NO Devanagari glyphs at all (verified directly -- renders as empty tofu
+# boxes), so it can't be used now that narration/captions/title are Hindi. Noto Sans
+# Devanagari covers Devanagari plus basic Latin/numbers/punctuation (verified: "आकाश 100%
+# नीला #Shorts (2026)" renders correctly, mixed script and all).
+HOOK_FONT_FILE = "/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf"
 HOOK_SECONDS = 2.2
 CAPTION_FONT_SIZE = 40
 

@@ -1,5 +1,7 @@
 """Call the Gemini free-tier API to research and write today's narrated script + scene
-breakdown for any general-interest topic (history/science/nature/mystery).
+breakdown for any general-interest topic (history/science/nature/mystery). Narration/title/
+description are written in Hindi (see build_prompt's LANGUAGE section) -- image_prompt and
+visual_description stay in English since the free image generator only understands English.
 
 Requires env var GEMINI_API_KEY (from https://aistudio.google.com/apikey).
 Model name is overridable via GEMINI_MODEL since Google renames/retires free-tier
@@ -63,9 +65,18 @@ RESPONSE_SCHEMA = {
 
 def build_prompt(topic, scene_count):
     return f"""You are a scriptwriter and visual director for a narrated, fact-based YouTube \
-Shorts video, vertical 9:16, aimed at a broad general audience.
+Shorts video, vertical 9:16, aimed at a broad Hindi-speaking general audience.
 
 TOPIC: {topic['title']} (category: {topic['category']})
+
+LANGUAGE: narration_text, video_title, and video_description MUST be written in natural,
+fluent, conversational HINDI using Devanagari script -- the way a real Hindi speaker would
+actually talk, NOT a stiff word-for-word translation from English. This text is spoken aloud
+by a Hindi text-to-speech voice and shown as on-screen Hindi captions, so it must read
+naturally out loud. tags should mix Hindi and English terms (English tags help search reach
+even on a Hindi video). image_prompt and visual_description MUST stay in ENGLISH regardless
+-- the free image generator only reliably understands English prompts, switching those to
+Hindi would hurt image quality.
 
 Research this topic using your own knowledge and write an accurate, engaging, hook-first
 narrated script. Do not fabricate specific statistics/dates you are not confident about --
@@ -88,9 +99,10 @@ Write exactly {scene_count} scenes forming a complete narrated mini-story about 
   for last.
 
 For each scene write:
-- narration_text: what's actually SPOKEN aloud for this scene -- 1-2 complete sentences,
-  roughly 12-25 words, conversational and engaging (not dry/academic). This becomes both the
-  TTS narration audio and the on-screen subtitle text, so it must stand alone as spoken prose.
+- narration_text: what's actually SPOKEN aloud for this scene, IN HINDI (Devanagari script)
+  -- 1-2 complete sentences, roughly 12-25 words, conversational and engaging (not dry/
+  academic, not a literal translation). This becomes both the TTS narration audio and the
+  on-screen subtitle text, so it must stand alone as natural spoken Hindi prose.
 - visual_description: a short plain-prose description of what the image should show for this
   scene, used later to automatically verify the generated image actually matches (can differ
   from narration_text -- narration can reference things the image doesn't literally show).
@@ -121,9 +133,10 @@ Every image_prompt must still be fully independent (never say "same as previous 
 
 Also pick ONE music_mood for the WHOLE video from calm/cozy/upbeat/curious/emotional that best
 fits this topic's overall tone (e.g. a mystery topic might suit "curious", a joyful nature
-fact might suit "upbeat"), and write a YouTube Shorts video_title (concise, curiosity-driven,
-include the word Shorts or #Shorts), a short video_description (1-3 sentences), and 8-12
-relevant tags.
+fact might suit "upbeat"), and write a YouTube Shorts video_title IN HINDI (concise, curiosity-
+driven; the "#Shorts" hashtag itself can stay in English/Latin script since hashtags aren't
+translated), a short video_description IN HINDI (1-3 sentences), and 8-12 tags (mix of Hindi
+and English terms).
 """
 
 
