@@ -1,7 +1,8 @@
 {
   "cycle": 1,
   "used_ids": [
-    "great_wall_china"
+    "great_wall_china",
+    "why_sky_is_blue"
   ],
   "history": [
     {
@@ -9,6 +10,12 @@
       "title": "How the Great Wall of China Was Built",
       "cycle": 1,
       "picked_at": "2026-08-25T11:59:18.469619+00:00"
+    },
+    {
+      "id": "why_sky_is_blue",
+      "title": "Why the Sky Is Blue",
+      "cycle": 1,
+      "picked_at": "2026-08-25T12:50:11.299715+00:00"
     }
   ]
 }
