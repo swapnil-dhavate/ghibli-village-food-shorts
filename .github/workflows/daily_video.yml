@@ -21,7 +21,11 @@ permissions:
 jobs:
   generate-and-publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # 90, not 45 -- run_pipeline.py now retries the whole script/voice/images/assembly chain
+    # up to 3 times for the same topic before giving up (see MAX_ATTEMPTS), so a day with a
+    # couple of QC failures needs more headroom than a single clean run does. Public repo, so
+    # this costs nothing regardless.
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
