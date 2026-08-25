@@ -9,6 +9,11 @@ on:
         description: "Build the video but don't publish to YouTube (for testing changes)"
         type: boolean
         default: false
+      privacy_override:
+        description: "Override youtube_privacy_status for this run only (blank = use config.json's default)"
+        type: choice
+        options: ["", "unlisted", "private", "public"]
+        default: ""
 
 permissions:
   contents: write
@@ -40,6 +45,7 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           SKIP_YOUTUBE_UPLOAD: ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_upload) && '1' || '' }}
+          YOUTUBE_PRIVACY_OVERRIDE: ${{ (github.event_name == 'workflow_dispatch' && inputs.privacy_override) || '' }}
         run: python run_pipeline.py
 
       - name: Upload video as workflow artifact (backup)

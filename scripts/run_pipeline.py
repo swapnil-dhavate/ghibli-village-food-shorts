@@ -54,8 +54,11 @@ def main():
 
     from upload_youtube import upload_video
 
-    print(f"[run_pipeline] uploading to YouTube (privacy={config['youtube_privacy_status']})...", file=sys.stderr)
-    result = upload_video(str(video_path), story, config["youtube_privacy_status"], config["youtube_category_id"])
+    # Lets a manual workflow_dispatch run publish as unlisted/private for review without
+    # changing config.json's default (which governs the unattended daily cron publish).
+    privacy_status = os.environ.get("YOUTUBE_PRIVACY_OVERRIDE") or config["youtube_privacy_status"]
+    print(f"[run_pipeline] uploading to YouTube (privacy={privacy_status})...", file=sys.stderr)
+    result = upload_video(str(video_path), story, privacy_status, config["youtube_category_id"])
     url = f"https://youtube.com/shorts/{result['id']}"
     print(f"[run_pipeline] done: {url}")
     return url
