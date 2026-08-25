@@ -93,22 +93,36 @@ def generate_image(scene, width, height, seed, model, out_path):
     Gemini's vision QC says the render doesn't match the scene's intended action. Free-tier
     image generation is seed-dependent and can drift completely off-prompt on a given seed
     (verified during testing) -- a different seed on the same prompt often fixes it.
+
+    Raises if every attempt still fails QC: shipping a confirmed-mismatched image (verified
+    during testing to sometimes be completely unrelated to the prompt, e.g. a random forest
+    scene for a cooking video) is worse than failing the run for a day -- the workflow can
+    always be re-triggered manually.
     """
     image_bytes = None
     for attempt in range(QC_MAX_ATTEMPTS):
         image_bytes = fetch_image_bytes(scene, width, height, seed + attempt * 1000, model)
         if check_image_matches(image_bytes, scene["character_actions"]):
-            break
+            out_path.write_bytes(image_bytes)
+            return
         print(f"[generate_images] scene {scene['scene_number']} QC mismatch on attempt {attempt + 1}, retrying with new seed", file=sys.stderr)
-    out_path.write_bytes(image_bytes)
+
+    raise RuntimeError(
+        f"scene {scene['scene_number']} failed vision QC on all {QC_MAX_ATTEMPTS} attempts "
+        f"(action: {scene['character_actions']!r}) -- refusing to publish a confirmed-mismatched image"
+    )
 
 
 def generate_all_images(story, output_dir, width, height, model, base_seed):
+    """Every scene uses the SAME base_seed (only the prompt differs) -- verified during testing
+    that this makes rendering style/color-grading far more consistent scene-to-scene than
+    incrementing the seed per scene, since the free backend's style drift is seed-driven, not
+    prompt-driven. Retries (see generate_image) still vary the seed, just from this shared base.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     for scene in story["scenes"]:
-        seed = base_seed + scene["scene_number"]
         out_path = output_dir / f"scene_{scene['scene_number']:02d}.png"
-        generate_image(scene, width, height, seed, model, out_path)
+        generate_image(scene, width, height, base_seed, model, out_path)
         scene["image_path"] = str(out_path)
     return story
 

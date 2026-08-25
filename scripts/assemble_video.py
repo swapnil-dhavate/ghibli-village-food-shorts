@@ -16,42 +16,51 @@ from pathlib import Path
 TRANSITION_SECONDS = 0.8
 FPS = 25
 
+def _ease(frame_expr, d_expr):
+    # Cosine ease-in-out over [0,1] instead of a linear ramp -- a constant-velocity pan/zoom
+    # reads as an obvious mechanical "ffmpeg slideshow" tell; slow-in/slow-out reads as an
+    # intentional camera move. `min(on,d)` guards the very last frame from overshooting.
+    return f"(1-cos(PI*min({frame_expr},{d_expr})/{d_expr}))/2"
+
+
 ZOOMPAN_EXPR = {
-    # z: zoom expression, x/y: pan expressions. `on`=output frame index, `d`=total frames.
+    # z/x/y are all direct functions of `on` (output frame index) and `d` (total frames),
+    # not frame-to-frame recursive increments, so the eased curve above can drive them.
+    # `on`=output frame index, `d`=total frames.
     "static": {
-        "z": "1.08",
+        "z": "1.10",
         "x": "iw/2-(iw/zoom/2)",
         "y": "ih/2-(ih/zoom/2)",
     },
     "push_in": {
-        "z": "min(zoom+0.0015,1.25)",
+        "z": f"1.0+0.22*{_ease('on', '{d}')}",
         "x": "iw/2-(iw/zoom/2)",
         "y": "ih/2-(ih/zoom/2)",
     },
     "pull_out": {
-        "z": "if(eq(on,0),1.25,max(zoom-0.0015,1.0))",
+        "z": f"1.22-0.22*{_ease('on', '{d}')}",
         "x": "iw/2-(iw/zoom/2)",
         "y": "ih/2-(ih/zoom/2)",
     },
     "pan_left": {
-        "z": "1.15",
-        "x": "(iw-iw/zoom)*(1-on/{d})",
+        "z": "1.18",
+        "x": f"(iw-iw/zoom)*(1-{_ease('on', '{d}')})",
         "y": "ih/2-(ih/zoom/2)",
     },
     "pan_right": {
-        "z": "1.15",
-        "x": "(iw-iw/zoom)*(on/{d})",
+        "z": "1.18",
+        "x": f"(iw-iw/zoom)*{_ease('on', '{d}')}",
         "y": "ih/2-(ih/zoom/2)",
     },
     "tilt_up": {
-        "z": "1.15",
+        "z": "1.18",
         "x": "iw/2-(iw/zoom/2)",
-        "y": "(ih-ih/zoom)*(1-on/{d})",
+        "y": f"(ih-ih/zoom)*(1-{_ease('on', '{d}')})",
     },
     "tilt_down": {
-        "z": "1.15",
+        "z": "1.18",
         "x": "iw/2-(iw/zoom/2)",
-        "y": "(ih-ih/zoom)*(on/{d})",
+        "y": f"(ih-ih/zoom)*{_ease('on', '{d}')}",
     },
 }
 
@@ -66,11 +75,12 @@ def run(cmd):
 def make_scene_clip(image_path, camera_motion, duration, width, height, out_path):
     d_frames = int(duration * FPS)
     expr = ZOOMPAN_EXPR.get(camera_motion, ZOOMPAN_EXPR["static"])
+    z_expr = expr["z"].format(d=d_frames)
     x_expr = expr["x"].format(d=d_frames)
     y_expr = expr["y"].format(d=d_frames)
     vf = (
         f"scale={width * 3}:{height * 3},"
-        f"zoompan=z='{expr['z']}':d={d_frames}:x='{x_expr}':y='{y_expr}':s={width}x{height}:fps={FPS},"
+        f"zoompan=z='{z_expr}':d={d_frames}:x='{x_expr}':y='{y_expr}':s={width}x{height}:fps={FPS},"
         "format=yuv420p"
     )
     run([
