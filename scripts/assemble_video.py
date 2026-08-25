@@ -37,38 +37,42 @@ ZOOMPAN_EXPR = {
     # z/x/y are all direct functions of `on` (output frame index) and `d` (total frames),
     # not frame-to-frame recursive increments, so the eased curve above can drive them.
     # `on`=output frame index, `d`=total frames.
+    #
+    # Ranges bumped up (0.22->0.40 zoom, 1.18->1.32 pan/tilt headroom) after user feedback that
+    # motion over a 5-8s narration-driven clip read as barely-there/static at the old range --
+    # same eased curve, just a bigger sweep so it's actually perceptible as movement.
     "static": {
         "z": "1.10",
         "x": "iw/2-(iw/zoom/2)",
         "y": "ih/2-(ih/zoom/2)",
     },
     "push_in": {
-        "z": f"1.0+0.22*{_ease('on', '{d}')}",
+        "z": f"1.0+0.40*{_ease('on', '{d}')}",
         "x": "iw/2-(iw/zoom/2)",
         "y": "ih/2-(ih/zoom/2)",
     },
     "pull_out": {
-        "z": f"1.22-0.22*{_ease('on', '{d}')}",
+        "z": f"1.40-0.40*{_ease('on', '{d}')}",
         "x": "iw/2-(iw/zoom/2)",
         "y": "ih/2-(ih/zoom/2)",
     },
     "pan_left": {
-        "z": "1.18",
+        "z": "1.32",
         "x": f"(iw-iw/zoom)*(1-{_ease('on', '{d}')})",
         "y": "ih/2-(ih/zoom/2)",
     },
     "pan_right": {
-        "z": "1.18",
+        "z": "1.32",
         "x": f"(iw-iw/zoom)*{_ease('on', '{d}')}",
         "y": "ih/2-(ih/zoom/2)",
     },
     "tilt_up": {
-        "z": "1.18",
+        "z": "1.32",
         "x": "iw/2-(iw/zoom/2)",
         "y": f"(ih-ih/zoom)*(1-{_ease('on', '{d}')})",
     },
     "tilt_down": {
-        "z": "1.18",
+        "z": "1.32",
         "x": "iw/2-(iw/zoom/2)",
         "y": f"(ih-ih/zoom)*{_ease('on', '{d}')}",
     },
