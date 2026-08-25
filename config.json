@@ -1,9 +1,8 @@
 {
-  "video_duration_seconds": 28,
   "scene_count": 4,
   "resolution": { "width": 1080, "height": 1920 },
-  "youtube_privacy_status": "public",
-  "youtube_category_id": "26",
+  "youtube_privacy_status": "unlisted",
+  "youtube_category_id": "27",
   "image_model": "flux",
-  "comment": "youtube_privacy_status is 'public' -- every daily video publishes automatically with no manual review. scene_count x ~7s scenes should land inside video_duration_seconds."
+  "comment": "youtube_privacy_status is 'unlisted' by design -- this is the HUMAN APPROVAL gate: every run publishes unlisted, a person reviews it, and only then flips it to public in YouTube Studio. video_duration_seconds is gone -- each scene's length is now driven by its own Piper narration duration (see assemble_video.py PADDING_SECONDS/MIN_SCENE_SECONDS), not a fixed target. youtube_category_id changed from 26 (Film & Animation) to 27 (Education), matching the new narrated general-topic content."
 }

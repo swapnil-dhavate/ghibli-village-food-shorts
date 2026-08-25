@@ -28,25 +28,23 @@ DURATION = 8
 # produced wildly inconsistent loudness (rain came out at -66dB, nearly silent). loudnorm
 # below normalizes every recipe to the same target loudness regardless of what the filter
 # chain did to its energy.
+# Generalized for any topic (history/science/nature/mystery) -- replaces the old food-only
+# tag set (chopping/oil_sizzling/etc.) now that the channel isn't food-specific anymore.
 RECIPES = {
+    "wind": ("brown", "lowpass=f=1800,tremolo=f=0.2:d=0.4,tremolo=f=0.55:d=0.2"),
     "rain": ("pink", "bandpass=f=3000:w=6000,tremolo=f=0.3:d=0.2,tremolo=f=0.83:d=0.1"),
     "birds": ("white", "bandpass=f=3500:w=2500,tremolo=f=7:d=0.85,tremolo=f=2.3:d=0.4"),
     "river": ("brown", "bandpass=f=600:w=900,tremolo=f=0.6:d=0.25,tremolo=f=1.7:d=0.12"),
-    "wind_leaves": ("brown", "lowpass=f=1800,tremolo=f=0.2:d=0.4,tremolo=f=0.55:d=0.2"),
-    "footsteps_wet_soil": ("pink", "bandpass=f=250:w=300,tremolo=f=1.2:d=0.85,tremolo=f=3.1:d=0.4"),
-    "chopping": ("white", "bandpass=f=1800:w=1600,tremolo=f=2.5:d=0.9,tremolo=f=6.3:d=0.5"),
-    "grinding_stone": ("brown", "bandpass=f=300:w=250,tremolo=f=3.5:d=0.75,tremolo=f=5.8:d=0.35"),
-    "water_pouring": ("pink", "bandpass=f=1000:w=1400,tremolo=f=1.0:d=0.35,tremolo=f=2.6:d=0.15"),
-    "rice_washing": ("pink", "bandpass=f=1500:w=1600,tremolo=f=2:d=0.55,tremolo=f=4.9:d=0.25"),
-    "dough_kneading": ("brown", "bandpass=f=350:w=300,tremolo=f=1.8:d=0.8,tremolo=f=4.4:d=0.4"),
-    "oil_sizzling": ("white", "highpass=f=4000,tremolo=f=28:d=0.55,tremolo=f=11:d=0.3"),
-    "clay_pot_boiling": ("pink", "bandpass=f=800:w=900,tremolo=f=3:d=0.55,tremolo=f=6.1:d=0.25"),
-    "wooden_spoon_stirring": ("pink", "bandpass=f=1200:w=900,tremolo=f=1.5:d=0.65,tremolo=f=3.7:d=0.3"),
+    "ocean_waves": ("brown", "lowpass=f=700,tremolo=f=0.12:d=0.6,tremolo=f=0.31:d=0.25"),
+    "thunder": ("brown", "lowpass=f=200,tremolo=f=0.15:d=0.5,tremolo=f=0.4:d=0.2"),
     "fire_crackling": ("white", "bandpass=f=2500:w=3000,tremolo=f=14:d=0.7,tremolo=f=5.3:d=0.35"),
-    "utensil_clinks": ("white", "bandpass=f=4500:w=3500,tremolo=f=3:d=0.92,tremolo=f=7.9:d=0.55"),
-    "banana_leaf": ("white", "bandpass=f=3000:w=2500,tremolo=f=2:d=0.9,tremolo=f=5.2:d=0.5"),
-    "steam": ("white", "highpass=f=6000,lowpass=f=13000,tremolo=f=0.4:d=0.15"),
-    "eating_ambience": ("pink", "bandpass=f=900:w=1200,tremolo=f=1.6:d=0.55,tremolo=f=3.9:d=0.25"),
+    "footsteps": ("pink", "bandpass=f=250:w=300,tremolo=f=1.2:d=0.85,tremolo=f=3.1:d=0.4"),
+    "heartbeat": ("brown", "lowpass=f=100,tremolo=f=1.2:d=0.9,tremolo=f=2.4:d=0.5"),
+    "clock_ticking": ("white", "highpass=f=5000,tremolo=f=1:d=0.9,tremolo=f=2:d=0.4"),
+    "crowd_ambience": ("pink", "bandpass=f=800:w=1400,tremolo=f=1.4:d=0.5,tremolo=f=3.3:d=0.25"),
+    "low_drone": ("brown", "lowpass=f=150,tremolo=f=0.1:d=0.2"),
+    "cave_echo": ("pink", "bandpass=f=700:w=1200,aecho=0.8:0.7:300|600:0.4|0.2"),
+    "wind_chimes": ("white", "highpass=f=5000,tremolo=f=2.5:d=0.6,tremolo=f=0.6:d=0.3"),
 }
 
 LOUDNESS_TARGET = "loudnorm=I=-20:TP=-3:LRA=7"

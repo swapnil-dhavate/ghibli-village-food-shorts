@@ -1,5 +1,8 @@
-"""Orchestrates one full daily run: pick dish -> write story -> generate images -> assemble
-video -> upload to YouTube. Called by .github/workflows/daily_video.yml, or manually for testing.
+"""Orchestrates one full daily run: pick topic -> research+write narrated script -> synthesize
+narration (Piper TTS) -> generate images -> assemble video (motion+voice+music+captions) ->
+upload to YouTube (unlisted by default -- see config.json's youtube_privacy_status -- so a
+human reviews and approves before it goes public). Called by .github/workflows/daily_video.yml,
+or manually for testing.
 """
 
 import json
@@ -8,8 +11,9 @@ import sys
 import time
 from pathlib import Path
 
-from pick_dish import pick_next_dish
-from generate_story import generate_story
+from pick_topic import pick_next_topic
+from generate_script import generate_script
+from generate_voice import generate_all_voice
 from generate_images import generate_all_images
 from assemble_video import assemble
 
@@ -23,13 +27,16 @@ def main():
     work_dir = ROOT / "work" / run_id
     work_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"[run_pipeline] picking today's dish...", file=sys.stderr)
-    dish = pick_next_dish()
-    print(f"[run_pipeline] dish: {dish['name']} ({dish['region']})", file=sys.stderr)
+    print(f"[run_pipeline] picking today's topic...", file=sys.stderr)
+    topic = pick_next_topic()
+    print(f"[run_pipeline] topic: {topic['title']} ({topic['category']})", file=sys.stderr)
 
-    print(f"[run_pipeline] writing story via Gemini...", file=sys.stderr)
-    story = generate_story(dish, config["scene_count"])
-    story["_video_duration_seconds"] = config["video_duration_seconds"]
+    print(f"[run_pipeline] researching and writing script via Gemini...", file=sys.stderr)
+    story = generate_script(topic, config["scene_count"])
+    (work_dir / "story.json").write_text(json.dumps(story, indent=2), encoding="utf-8")
+
+    print(f"[run_pipeline] synthesizing narration via Piper TTS...", file=sys.stderr)
+    story = generate_all_voice(story, work_dir / "voice")
     (work_dir / "story.json").write_text(json.dumps(story, indent=2), encoding="utf-8")
 
     print(f"[run_pipeline] generating {len(story['scenes'])} scene images via Pollinations...", file=sys.stderr)
@@ -41,9 +48,9 @@ def main():
     (work_dir / "story.json").write_text(json.dumps(story, indent=2), encoding="utf-8")
 
     print(f"[run_pipeline] assembling video...", file=sys.stderr)
-    video_path = work_dir / f"{dish['id']}_{run_id}.mp4"
+    video_path = work_dir / f"{topic['id']}_{run_id}.mp4"
     assemble(
-        story, work_dir, ROOT / "assets" / "sfx",
+        story, work_dir, ROOT / "assets" / "sfx", ROOT / "assets" / "music",
         config["resolution"]["width"], config["resolution"]["height"], video_path,
     )
     print(f"[run_pipeline] video ready: {video_path}", file=sys.stderr)
@@ -54,8 +61,7 @@ def main():
 
     from upload_youtube import upload_video
 
-    # Lets a manual workflow_dispatch run publish as unlisted/private for review without
-    # changing config.json's default (which governs the unattended daily cron publish).
+    # Lets a manual workflow_dispatch run override config.json's default for this run only.
     privacy_status = os.environ.get("YOUTUBE_PRIVACY_OVERRIDE") or config["youtube_privacy_status"]
     print(f"[run_pipeline] uploading to YouTube (privacy={privacy_status})...", file=sys.stderr)
     result = upload_video(str(video_path), story, privacy_status, config["youtube_category_id"])

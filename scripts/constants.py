@@ -1,64 +1,25 @@
-"""Shared constants: character bible, environment rules, negative prompt.
+"""Shared constants: art style, negative prompt, camera motions, audio tags, music moods.
 
-Kept as plain Python strings (not an LLM call) so every scene's image prompt
-is built from the exact same wording -- this is the main lever we have for
-character/style consistency without a trained LoRA.
+Generalized for any topic (history/science/nature/mystery), not just Indian village food --
+the old CHARACTER_BIBLE / ENVIRONMENT_RULES / CHARACTER_REFERENCE_IMAGES were specific to the
+food-channel format and are gone now that there's no fixed recurring cast.
 """
-
-CHARACTER_BIBLE = """\
-FATHER: 35-year-old Indian village farmer, kind and caring expression, simple cotton dhoti \
-and light cotton kurta, barefoot, a traditional woven towel resting on one shoulder.
-MOTHER: 32-year-old woman, warm and loving expression, traditional cotton saree, hair neatly \
-tied back, small red bindi, gentle smile.
-GRANDMOTHER: 65-year-old woman, wrinkled face, white-grey hair tied in a bun, traditional \
-cotton saree, wise and caring expression.
-SON: 8-year-old boy, cheerful, simple village clothes, curious and playful expression.
-DAUGHTER: 6-year-old girl, long braided hair, traditional frock or lehenga, happy and \
-innocent expression.
-"""
-
-# One committed reference portrait per character (see assets/character_refs/), generated once
-# with a fixed seed so the whole cast is visually consistent. generate_images.py conditions the
-# kontext image-to-image model on whichever of these matches a scene's primary_character,
-# instead of relying on text description alone -- verified to hold style/identity far better
-# across scenes (and across days) than prompt wording ever could on this free backend. Falls
-# back to plain flux generation (no reference) whenever kontext is unavailable/out of credit.
-CHARACTER_REFERENCE_IMAGES = {
-    "father": "assets/character_refs/father.png",
-    "mother": "assets/character_refs/mother.png",
-    "grandmother": "assets/character_refs/grandmother.png",
-    "son": "assets/character_refs/son.png",
-    "daughter": "assets/character_refs/daughter.png",
-}
-
-# Public raw-file base URL Pollinations' `kontext` model fetches reference images from (this
-# repo is public specifically so Actions minutes are free -- see README -- which also makes
-# this URL always fetchable with no auth).
-REPO_RAW_BASE_URL = "https://raw.githubusercontent.com/swapnil-dhavate/ghibli-village-food-shorts/main"
 
 # NOTE: "Studio Ghibli anime style" tested poorly on the free image backend (drifts into
 # photorealistic/3D-render looks instead of illustration). "Flat 2D children's book
-# illustration style" tested reliably better -- see generate_story.py's build_prompt rule 2.
+# illustration style" tested reliably better -- see generate_script.py's build_prompt rule 2.
+# Kept as the style anchor here since it's a proven-reliable lever on this backend, even
+# though the content domain is no longer food-specific.
 ART_STYLE = (
     "flat 2D children's book illustration style, warm colors, soft painterly background, "
-    "rich greenery, vibrant yet natural colors, cozy countryside atmosphere, highly detailed, "
-    "no CGI sheen, no 3D render look, no photorealism"
-)
-
-ENVIRONMENT_RULES = (
-    "Traditional Indian village setting only: mud house, earthen courtyard, clay stove (chulha), "
-    "thatched roof, earthen and brass utensils, wooden and bamboo baskets, firewood. "
-    "Never include: cars, motorcycles, electricity poles, plastic furniture, modern kitchen "
-    "appliances, mobile phones, television, or concrete city buildings."
+    "vibrant yet natural colors, highly detailed, no CGI sheen, no 3D render look, no "
+    "photorealism"
 )
 
 NEGATIVE_PROMPT = (
-    "text, subtitles, watermark, logo, modern house, city buildings, vehicles, motorcycles, "
-    "electric poles, plastic furniture, microwave, refrigerator, gas stove, induction stove, "
-    "mobile phone, television, modern clothing, extra people, blurry face, low quality, "
-    "bad anatomy, extra fingers, missing fingers, duplicate body parts, distorted hands, "
-    "cropped body, oversaturated colors, unrealistic food, inconsistent characters, "
-    "inconsistent clothing"
+    "text, subtitles, watermark, logo, modern clothing, extra people, blurry face, low "
+    "quality, bad anatomy, extra fingers, missing fingers, duplicate body parts, distorted "
+    "hands, cropped body, oversaturated colors, inconsistent style"
 )
 
 # Maps a scene's requested camera_motion to an ffmpeg zoompan direction used by assemble_video.py
@@ -72,10 +33,15 @@ CAMERA_MOTIONS = {
     "tilt_down": "tilt_down",
 }
 
-# audio_tags an LLM may use per scene; each must map to assets/sfx/<tag>.mp3 for assemble_video.py
+# audio_tags an LLM may use per scene; each must map to assets/sfx/<tag>.mp3 for assemble_video.py.
+# Broadened from the old food-only list (chopping/oil_sizzling/etc.) to cover history, science,
+# nature, and mystery topics.
 KNOWN_AUDIO_TAGS = [
-    "rain", "birds", "river", "wind_leaves", "footsteps_wet_soil", "chopping",
-    "grinding_stone", "water_pouring", "rice_washing", "dough_kneading", "oil_sizzling",
-    "clay_pot_boiling", "wooden_spoon_stirring", "fire_crackling", "utensil_clinks",
-    "banana_leaf", "steam", "eating_ambience",
+    "wind", "rain", "birds", "river", "ocean_waves", "thunder", "fire_crackling",
+    "footsteps", "heartbeat", "clock_ticking", "crowd_ambience", "low_drone",
+    "cave_echo", "wind_chimes",
 ]
+
+# music_mood an LLM picks once per video (whole-video background bed, not per-scene) --
+# each must map to assets/music/<mood>.mp3. See assets/music/README.md for sourcing.
+MUSIC_MOODS = ["calm", "cozy", "upbeat", "curious", "emotional"]

@@ -1,28 +1,45 @@
-# Ghibli Village Food Shorts — autonomous daily pipeline
+# Narrated Topic Shorts — autonomous daily pipeline
 
 Every day, GitHub Actions:
-1. Picks a new Indian regional dish (no repeats until the whole catalog cycles — `data/dish_catalog.json` / `data/state/used_dishes.json`).
-2. Asks Gemini (free tier) to write a wordless, scene-by-scene story + image prompts for a vertical Studio Ghibli-style ASMR short, using a fixed character bible (`scripts/constants.py`) for consistency.
-3. Generates one still image per scene via Pollinations.ai (free, no key).
-4. Assembles a vertical video with ffmpeg: Ken Burns pan/zoom per scene, crossfade transitions, and an ASMR sound bed mixed from `assets/sfx/`.
-5. Publishes the result **publicly** to your YouTube channel via the Data API v3, automatically,
-   no human review. Runs daily at 03:30 UTC (09:00 IST).
+1. Picks a new general-interest topic (history/science/nature/mystery — no repeats until the
+   whole catalog cycles: `data/topic_catalog.json` / `data/state/used_topics.json`).
+2. Asks Gemini (free tier) to research the topic (from its own training knowledge, no external
+   search) and write a hook-first narrated script + scene breakdown, vertical 9:16.
+3. Synthesizes narration audio per scene with **Piper TTS** — free, open-source, runs entirely
+   offline/on-CPU inside the job itself, no API key or account.
+4. Generates one still image per scene via Pollinations.ai's free `flux` model (all scenes share
+   one seed per video for style consistency — see `scripts/generate_images.py`).
+5. Assembles a vertical video with ffmpeg: Ken Burns pan/zoom sized to each scene's actual
+   narration length, a 3-way audio mix (narration + low-volume ambient SFX + a looped background
+   music bed), an opening title card, and burned-in captions synced to the narration.
+6. Uploads to YouTube via the Data API v3 as **unlisted** by default — this is the human-approval
+   gate: a person reviews the video and manually flips it to public in YouTube Studio. Runs
+   daily at 03:30 UTC (09:00 IST) via cron, or on demand via the Actions tab.
+
+This replaced an earlier wordless, food-only ASMR format (character bible, dish catalog, no
+narration, fully autonomous public publish) — see `PROJECT_LOG.md` for that history and why it
+changed. The old dish catalog/rotation-state files are kept in the repo as a historical record
+but are no longer used by the pipeline.
 
 ## Known limitations (read before you trust the output)
 
-- **No true generative motion.** There's no free API for actual AI video generation (rain
-  falling, faces blinking, etc.) without a paid tier. Motion here is ffmpeg pan/zoom/crossfade
-  over still images — the ASMR sound design carries a lot of the "alive" feeling.
-- **Character consistency will drift.** Every scene's image prompt restates the same character
-  bible in words, which is the only real lever without a trained LoRA (that needs a GPU to
-  train). Expect the family to look *similar*, not pixel-identical, across scenes.
-- **YouTube policy risk.** A channel publishing daily, fully AI-generated, zero human review can
-  read as "reused/repetitious content" to YouTube's spam policies. `config.json` currently sets
-  `youtube_privacy_status` to `"public"` -- every day's video goes live automatically with no
-  review step. Set it back to `"unlisted"` if you want to review before publishing again.
+- **No true generative motion.** There's no free API for actual AI video generation (verified
+  directly against real accounts — every hosted video/image-to-video/TTS model that isn't
+  plain-text-to-still-image is paid, no exceptions found). Motion here is ffmpeg pan/zoom/
+  crossfade over still images.
+- **Character/scene consistency will drift** across scenes and across videos — same-seed-per-
+  video helps within one video, but there's no trained model or reference-image conditioning
+  (the free `kontext` image-to-image model exists but costs ~$0.04/image with no free grant —
+  see `generate_images.py`'s docstring).
+- **Piper narration is a synthesized voice**, not a real human recording — verified it works and
+  sounds reasonably natural (VITS neural TTS, not old robotic TTS), but it's not a substitute
+  for professional voiceover.
+- **SFX and music**: SFX are synthetic noise-based placeholders (`assets/sfx/`); music tracks
+  are real royalty-free files you source yourself into `assets/music/` (see that folder's
+  README) — the pipeline degrades gracefully (silence) if either is missing for a given tag/mood.
 - **QC isn't perfect.** The Gemini vision QC step catches many off-prompt image renders and
-  retries with a new seed, but it isn't guaranteed to catch everything within the retry budget
-  -- an occasional published video may still have a rough scene.
+  retries with a new seed, but if every retry still fails, the run fails loudly rather than
+  publishing a confirmed-mismatched image (by design — see `generate_images.py`).
 - **Free-tier quotas.** Gemini's free tier and Pollinations.ai both have rate limits. One run/day
   should comfortably fit; don't lower the cron interval without checking quotas.
 
@@ -52,20 +69,31 @@ In the repo's Settings → Secrets and variables → Actions, add:
 - `YT_CLIENT_SECRET`
 - `YT_REFRESH_TOKEN`
 
-### 4. Add ASMR sound effects
-See `assets/sfx/README.md` — the pipeline runs without them (falls back to silence per scene)
-but the whole point is ASMR, so add them before you care about output quality.
+(`POLLINATIONS_API_KEY` also exists as a secret from an earlier experiment with the paid
+`kontext` model — currently unused by the pipeline, harmless to leave or remove.)
+
+### 4. Background music (optional but recommended)
+See `assets/music/README.md` — drop free, royalty-free tracks named `calm.mp3`, `cozy.mp3`,
+`upbeat.mp3`, `curious.mp3`, `emotional.mp3`. The pipeline runs without them (falls back to no
+music for a given mood) but real music is a large quality jump over nothing.
 
 ### 5. Push and enable Actions
 Push this repo to GitHub, then check the **Actions** tab is enabled. Use **Run workflow**
 (workflow_dispatch) to trigger a manual test run before waiting for the daily cron.
 
+## Human approval workflow
+
+Every video uploads as **unlisted**. To publish: open the video's YouTube Studio page, review
+it, and change visibility to Public yourself. Nothing publishes automatically without that
+manual step (this is a deliberate change from an earlier fully-autonomous-public version).
+
 ## Tuning
-- `config.json`: `scene_count`, `video_duration_seconds`, output resolution, image model,
-  and `youtube_privacy_status` (currently `"public"` -- set to `"unlisted"` to go back to
-  manual review before publishing).
+- `config.json`: `scene_count`, output resolution, image model, `youtube_privacy_status`
+  (`"unlisted"` by design — see above).
 - `.github/workflows/daily_video.yml`: cron schedule (`30 3 * * *` = 03:30 UTC = 09:00 IST daily).
-- `data/dish_catalog.json`: add more dishes any time to extend the no-repeat rotation.
+- `data/topic_catalog.json`: add more topics any time to extend the no-repeat rotation.
+- `scripts/assemble_video.py`: `SFX_VOLUME`/`MUSIC_VOLUME`/`PADDING_SECONDS` control the audio
+  mix balance and per-scene pacing.
 
 ## Local testing
 ```
@@ -73,4 +101,5 @@ pip install -r requirements.txt
 set GEMINI_API_KEY=...
 python scripts/run_pipeline.py
 ```
-Requires `ffmpeg` on PATH. Output lands in `work/<date>/`.
+Requires `ffmpeg` on PATH (with `fonts-dejavu-core`/DejaVu Sans Bold available for the title
+card and captions). Output lands in `work/<date>/`.
