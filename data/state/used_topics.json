@@ -1,5 +1,14 @@
 {
   "cycle": 1,
-  "used_ids": [],
-  "history": []
+  "used_ids": [
+    "great_wall_china"
+  ],
+  "history": [
+    {
+      "id": "great_wall_china",
+      "title": "How the Great Wall of China Was Built",
+      "cycle": 1,
+      "picked_at": "2026-08-25T11:59:18.469619+00:00"
+    }
+  ]
 }
