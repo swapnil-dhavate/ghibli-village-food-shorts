@@ -3,7 +3,8 @@
   "used_ids": [
     "vadapav",
     "litti_chokha",
-    "dhokla"
+    "dhokla",
+    "appam_stew"
   ],
   "history": [
     {
@@ -23,6 +24,12 @@
       "name": "Dhokla",
       "cycle": 1,
       "picked_at": "2026-08-24T04:22:42.878763+00:00"
+    },
+    {
+      "id": "appam_stew",
+      "name": "Appam with Coconut Stew",
+      "cycle": 1,
+      "picked_at": "2026-08-25T04:09:58.147657+00:00"
     }
   ]
 }
