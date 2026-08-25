@@ -4,14 +4,18 @@ Primary path: the free, keyless `flux` model, text-prompt-only. No character-con
 guarantee here -- same wording every scene (plus a shared seed, see generate_all_images) is
 the only lever available without a reference image.
 
-Optional upgrade path: if POLLINATIONS_API_KEY is set (a free account at
-enter.pollinations.ai, no card needed), try the `kontext` image-to-image model first,
-conditioned on that scene's primary_character's committed reference portrait (see
-constants.CHARACTER_REFERENCE_IMAGES) -- this carries real identity/style consistency across
-scenes AND across every future video, not just a shared seed's rough family resemblance.
-Falls back to the plain flux path automatically (no error) whenever kontext is unavailable,
-unauthenticated, or out of free daily credit -- this can never cost anything unless the
-account has a card on file, which it should not for this project's $0 constraint.
+Optional upgrade path: if POLLINATIONS_API_KEY is set (enter.pollinations.ai), try the
+`kontext` image-to-image model first, conditioned on that scene's primary_character's
+committed reference portrait (see constants.CHARACTER_REFERENCE_IMAGES) -- this would carry
+real identity/style consistency across scenes AND across every future video, not just a
+shared seed's rough family resemblance.
+
+VERIFIED (2026-08-25, real account, real key): kontext costs ~0.04 pollen (~$0.04) per image,
+billed against a prepaid balance -- a brand-new free account's balance is 0.0000 with no
+automatic daily grant, so this path is a real dead end at $0 budget (~$4.80/month for 4
+scenes/day if ever funded). Falls back to the always-free flux path automatically and
+silently whenever kontext errors for any reason (no key, no reference, insufficient balance,
+network error) -- this can never charge anything unless the account is funded.
 """
 
 import base64
@@ -99,11 +103,17 @@ def fetch_image_bytes(scene, width, height, seed, model, max_retries=4):
     raise RuntimeError(f"Image generation failed for scene {scene['scene_number']} after {max_retries} attempts: {last_error}")
 
 
+KONTEXT_BASE = "https://gen.pollinations.ai/image"  # kontext only exists on the newer unified
+# endpoint -- the legacy image.pollinations.ai/prompt endpoint used for flux above always
+# rejects it with "kontext model is only available on enter.pollinations.ai", regardless of
+# any key supplied (verified directly).
+
+
 def fetch_kontext_image_bytes(scene, width, height, timeout=180):
     """Try the reference-conditioned `kontext` model for this scene. Returns None (never
     raises) whenever it's unavailable for any reason -- no API key configured, no reference
-    image for this scene's primary_character, out of free daily credit, or any request error
-    -- so the caller can transparently fall back to the always-free flux path.
+    image for this scene's primary_character, insufficient pollen balance, or any request
+    error -- so the caller can transparently fall back to the always-free flux path.
     """
     if not POLLINATIONS_API_KEY:
         return None
@@ -114,21 +124,20 @@ def fetch_kontext_image_bytes(scene, width, height, timeout=180):
     reference_url = f"{REPO_RAW_BASE_URL}/{reference_rel_path}"
     prompt = build_full_prompt(scene)
     encoded_prompt = urllib.parse.quote(prompt, safe="")
-    url = f"{POLLINATIONS_BASE}/{encoded_prompt}"
+    url = f"{KONTEXT_BASE}/{encoded_prompt}"
     params = {
         "width": width,
         "height": height,
         "model": "kontext",
         "image": reference_url,
         "nologo": "true",
-        "key": POLLINATIONS_API_KEY,  # some Pollinations endpoints expect query-param auth
     }
-    headers = {"Authorization": f"Bearer {POLLINATIONS_API_KEY}"}  # others expect Bearer -- send both, harmless
+    headers = {"Authorization": f"Bearer {POLLINATIONS_API_KEY}"}
 
     try:
         resp = requests.get(url, params=params, headers=headers, timeout=timeout)
         if resp.status_code != 200 or "image" not in resp.headers.get("content-type", ""):
-            print(f"[generate_images] kontext unavailable for scene {scene['scene_number']} ({resp.status_code}), falling back to flux", file=sys.stderr)
+            print(f"[generate_images] kontext unavailable for scene {scene['scene_number']} ({resp.status_code}: {resp.text[:200]}), falling back to flux", file=sys.stderr)
             return None
         return resp.content
     except Exception as exc:  # noqa: BLE001 - any failure just falls back to flux
