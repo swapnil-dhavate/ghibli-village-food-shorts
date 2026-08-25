@@ -2,7 +2,8 @@
   "cycle": 1,
   "used_ids": [
     "great_wall_china",
-    "why_sky_is_blue"
+    "why_sky_is_blue",
+    "mariana_trench"
   ],
   "history": [
     {
@@ -16,6 +17,12 @@
       "title": "Why the Sky Is Blue",
       "cycle": 1,
       "picked_at": "2026-08-25T12:50:11.299715+00:00"
+    },
+    {
+      "id": "mariana_trench",
+      "title": "The Mariana Trench, Earth's Deepest Point",
+      "cycle": 1,
+      "picked_at": "2026-08-25T14:06:48.377062+00:00"
     }
   ]
 }
