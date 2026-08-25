@@ -161,6 +161,44 @@ def chain_acrossfade(audio_paths, out_path):
     run(cmd)
 
 
+HOOK_FONT_FILE = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+HOOK_SECONDS = 2.2
+
+
+def _escape_drawtext(text):
+    # ffmpeg drawtext's text= value has its own escaping rules (colon/quote/percent/backslash
+    # are all meaningful) -- a raw video_title containing any of these would otherwise either
+    # break the filter or get silently mangled.
+    return (
+        text.replace("\\", "\\\\")
+        .replace(":", "\\:")
+        .replace("'", "\\'")
+        .replace("%", "\\%")
+    )
+
+
+def add_title_hook(video_in, video_title, out_path):
+    """Overlay the dish name for the first ~2s as a fading title card. A silent slideshow with
+    zero on-screen text has nothing to stop the scroll or orient a muted viewer in the first
+    second -- this is a cheap, free fix for that, independent of image/motion quality.
+    """
+    hook_text = video_title.split("|")[0].replace("#Shorts", "").strip()
+    if not hook_text:
+        run(["ffmpeg", "-y", "-i", str(video_in), "-c", "copy", str(out_path)])
+        return
+
+    escaped = _escape_drawtext(hook_text)
+    fade_expr = (
+        f"if(lt(t,0.3),t/0.3,if(gt(t,{HOOK_SECONDS - 0.3}),max(0,({HOOK_SECONDS}-t)/0.3),1))"
+    )
+    vf = (
+        f"drawtext=fontfile={HOOK_FONT_FILE}:text='{escaped}':fontsize=58:fontcolor=white:"
+        f"box=1:boxcolor=black@0.45:boxborderw=24:x=(w-text_w)/2:y=140:"
+        f"enable='lte(t,{HOOK_SECONDS})':alpha='{fade_expr}'"
+    )
+    run(["ffmpeg", "-y", "-i", str(video_in), "-vf", vf, str(out_path)])
+
+
 def assemble(story, work_dir, sfx_dir, width, height, out_path):
     work_dir = Path(work_dir)
     scenes = story["scenes"]
@@ -178,12 +216,14 @@ def assemble(story, work_dir, sfx_dir, width, height, out_path):
         audio_clips.append(a_path)
 
     video_out = work_dir / "video_only.mp4"
+    video_hooked = work_dir / "video_with_hook.mp4"
     audio_out = work_dir / "audio_only.m4a"
     chain_xfade(video_clips, clip_duration, video_out)
+    add_title_hook(video_out, story.get("video_title", ""), video_hooked)
     chain_acrossfade(audio_clips, audio_out)
 
     run([
-        "ffmpeg", "-y", "-i", str(video_out), "-i", str(audio_out),
+        "ffmpeg", "-y", "-i", str(video_hooked), "-i", str(audio_out),
         "-c:v", "libx264", "-c:a", "aac", "-shortest", str(out_path),
     ])
 
