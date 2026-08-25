@@ -4,7 +4,8 @@
     "vadapav",
     "litti_chokha",
     "dhokla",
-    "appam_stew"
+    "appam_stew",
+    "makki_di_roti_sarson"
   ],
   "history": [
     {
@@ -30,6 +31,12 @@
       "name": "Appam with Coconut Stew",
       "cycle": 1,
       "picked_at": "2026-08-25T04:09:58.147657+00:00"
+    },
+    {
+      "id": "makki_di_roti_sarson",
+      "name": "Makki di Roti with Sarson da Saag",
+      "cycle": 1,
+      "picked_at": "2026-08-25T09:13:47.135942+00:00"
     }
   ]
 }
