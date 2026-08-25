@@ -177,7 +177,30 @@ def _escape_drawtext(text):
     )
 
 
-def add_title_hook(video_in, video_title, out_path):
+def _fit_font_size(text, max_width_px, font_path, max_size=58, min_size=28, step=2):
+    """Measure actual rendered text width (via the real font file) and shrink until it fits,
+    instead of guessing a fixed size -- verified directly that a fixed size overflowed the
+    frame on a longer title ("Refreshing Pakhala Bhata of Odisha" got clipped on both edges).
+    Falls back to min_size (never crashes) if Pillow or the font file isn't available, e.g. in
+    a local dev environment without fonts-dejavu-core installed.
+    """
+    try:
+        from PIL import ImageFont
+    except ImportError:
+        return min_size
+    size = max_size
+    while size > min_size:
+        try:
+            font = ImageFont.truetype(font_path, size)
+        except OSError:
+            return min_size
+        if font.getlength(text) <= max_width_px:
+            return size
+        size -= step
+    return min_size
+
+
+def add_title_hook(video_in, video_title, width, out_path):
     """Overlay the dish name for the first ~2s as a fading title card. A silent slideshow with
     zero on-screen text has nothing to stop the scroll or orient a muted viewer in the first
     second -- this is a cheap, free fix for that, independent of image/motion quality.
@@ -188,11 +211,12 @@ def add_title_hook(video_in, video_title, out_path):
         return
 
     escaped = _escape_drawtext(hook_text)
+    fontsize = _fit_font_size(hook_text, width * 0.88, HOOK_FONT_FILE)
     fade_expr = (
         f"if(lt(t,0.3),t/0.3,if(gt(t,{HOOK_SECONDS - 0.3}),max(0,({HOOK_SECONDS}-t)/0.3),1))"
     )
     vf = (
-        f"drawtext=fontfile={HOOK_FONT_FILE}:text='{escaped}':fontsize=58:fontcolor=white:"
+        f"drawtext=fontfile={HOOK_FONT_FILE}:text='{escaped}':fontsize={fontsize}:fontcolor=white:"
         f"box=1:boxcolor=black@0.45:boxborderw=24:x=(w-text_w)/2:y=140:"
         f"enable='lte(t,{HOOK_SECONDS})':alpha='{fade_expr}'"
     )
@@ -219,7 +243,7 @@ def assemble(story, work_dir, sfx_dir, width, height, out_path):
     video_hooked = work_dir / "video_with_hook.mp4"
     audio_out = work_dir / "audio_only.m4a"
     chain_xfade(video_clips, clip_duration, video_out)
-    add_title_hook(video_out, story.get("video_title", ""), video_hooked)
+    add_title_hook(video_out, story.get("video_title", ""), width, video_hooked)
     chain_acrossfade(audio_clips, audio_out)
 
     run([
