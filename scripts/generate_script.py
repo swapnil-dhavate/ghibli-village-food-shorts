@@ -74,8 +74,14 @@ prefer well-established facts over invented precision.
 ART STYLE (for your own reference, not restated in narration): {ART_STYLE}
 
 Write exactly {scene_count} scenes forming a complete narrated mini-story about this topic:
-- Scene 1 MUST open with a surprising fact or a hook question in its first sentence -- no
-  slow build-up, the viewer decides whether to keep watching in the first two seconds.
+- Scene 1's NARRATION must open with a surprising fact or a hook question in its first
+  sentence -- no slow build-up, the viewer decides whether to keep watching in the first two
+  seconds. The hook lives in the words, NOT in the image: scene 1's image_prompt/
+  visual_description must still be just as simple and concrete as every other scene (a
+  specific person/animal/place doing one simple thing) -- do not reach for a more abstract or
+  symbolic visual just because it's the opening scene (e.g. don't try to depict "a prism
+  splitting light into a rainbow" or "a question mark over a landscape" -- ground scene 1 in
+  a concrete moment from the topic instead, the same way you would any other scene).
 - Middle scenes each cover one distinct, accurate fact or step about the topic, in a logical
   order.
 - The final scene lands on a satisfying closing thought or the most striking fact, saved
