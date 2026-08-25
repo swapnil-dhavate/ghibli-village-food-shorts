@@ -12,7 +12,14 @@ from pathlib import Path
 
 import requests
 
-from constants import ART_STYLE, CHARACTER_BIBLE, ENVIRONMENT_RULES, KNOWN_AUDIO_TAGS, NEGATIVE_PROMPT
+from constants import (
+    ART_STYLE,
+    CHARACTER_BIBLE,
+    CHARACTER_REFERENCE_IMAGES,
+    ENVIRONMENT_RULES,
+    KNOWN_AUDIO_TAGS,
+    NEGATIVE_PROMPT,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
@@ -36,13 +43,20 @@ RESPONSE_SCHEMA = {
                     "title": {"type": "STRING"},
                     "character_actions": {"type": "STRING"},
                     "image_prompt": {"type": "STRING"},
+                    "primary_character": {
+                        "type": "STRING",
+                        "enum": list(CHARACTER_REFERENCE_IMAGES.keys()),
+                    },
                     "camera_motion": {
                         "type": "STRING",
                         "enum": ["static", "push_in", "pull_out", "pan_left", "pan_right", "tilt_up", "tilt_down"],
                     },
                     "audio_tags": {"type": "ARRAY", "items": {"type": "STRING", "enum": KNOWN_AUDIO_TAGS}},
                 },
-                "required": ["scene_number", "act", "title", "character_actions", "image_prompt", "camera_motion", "audio_tags"],
+                "required": [
+                    "scene_number", "act", "title", "character_actions", "image_prompt",
+                    "primary_character", "camera_motion", "audio_tags",
+                ],
             },
         },
     },
@@ -97,6 +111,12 @@ CRITICAL image_prompt RULES -- the image generator only reliably renders roughly
 5. End with at most one short clause for weather/setting (e.g. "in a rainy mud-house
    courtyard") -- do not list camera angle, negative prompts, or long style adjective lists.
 Every image_prompt must still be fully independent (never say "same as previous scene").
+
+primary_character must name whichever single family member (father/mother/grandmother/son/
+daughter) is the main visual subject of that scene's image_prompt -- pick one even if two
+characters appear (e.g. a family-meal scene with father and daughter: pick whichever one is
+more central/active). This is used to render the scene from that character's fixed reference
+portrait, so pick the character whose presence matters most for this scene to look right.
 
 Also write a YouTube Shorts video_title (include the dish name and the word Shorts or #Shorts),
 a short video_description (1-3 sentences, no dialogue quoted, mention it's a wordless ASMR

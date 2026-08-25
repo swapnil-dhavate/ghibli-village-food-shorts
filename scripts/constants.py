@@ -17,6 +17,25 @@ DAUGHTER: 6-year-old girl, long braided hair, traditional frock or lehenga, happ
 innocent expression.
 """
 
+# One committed reference portrait per character (see assets/character_refs/), generated once
+# with a fixed seed so the whole cast is visually consistent. generate_images.py conditions the
+# kontext image-to-image model on whichever of these matches a scene's primary_character,
+# instead of relying on text description alone -- verified to hold style/identity far better
+# across scenes (and across days) than prompt wording ever could on this free backend. Falls
+# back to plain flux generation (no reference) whenever kontext is unavailable/out of credit.
+CHARACTER_REFERENCE_IMAGES = {
+    "father": "assets/character_refs/father.png",
+    "mother": "assets/character_refs/mother.png",
+    "grandmother": "assets/character_refs/grandmother.png",
+    "son": "assets/character_refs/son.png",
+    "daughter": "assets/character_refs/daughter.png",
+}
+
+# Public raw-file base URL Pollinations' `kontext` model fetches reference images from (this
+# repo is public specifically so Actions minutes are free -- see README -- which also makes
+# this URL always fetchable with no auth).
+REPO_RAW_BASE_URL = "https://raw.githubusercontent.com/swapnil-dhavate/ghibli-village-food-shorts/main"
+
 # NOTE: "Studio Ghibli anime style" tested poorly on the free image backend (drifts into
 # photorealistic/3D-render looks instead of illustration). "Flat 2D children's book
 # illustration style" tested reliably better -- see generate_story.py's build_prompt rule 2.
