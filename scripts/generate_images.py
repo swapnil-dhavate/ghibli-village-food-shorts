@@ -121,8 +121,9 @@ def fetch_kontext_image_bytes(scene, width, height, timeout=180):
         "model": "kontext",
         "image": reference_url,
         "nologo": "true",
+        "key": POLLINATIONS_API_KEY,  # some Pollinations endpoints expect query-param auth
     }
-    headers = {"Authorization": f"Bearer {POLLINATIONS_API_KEY}"}
+    headers = {"Authorization": f"Bearer {POLLINATIONS_API_KEY}"}  # others expect Bearer -- send both, harmless
 
     try:
         resp = requests.get(url, params=params, headers=headers, timeout=timeout)
