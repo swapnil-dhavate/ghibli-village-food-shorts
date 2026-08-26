@@ -3,7 +3,8 @@
   "used_ids": [
     "great_wall_china",
     "why_sky_is_blue",
-    "mariana_trench"
+    "mariana_trench",
+    "egyptian_pyramids"
   ],
   "history": [
     {
@@ -23,6 +24,12 @@
       "title": "The Mariana Trench, Earth's Deepest Point",
       "cycle": 1,
       "picked_at": "2026-08-25T14:06:48.377062+00:00"
+    },
+    {
+      "id": "egyptian_pyramids",
+      "title": "How the Egyptian Pyramids Were Built",
+      "cycle": 1,
+      "picked_at": "2026-08-26T04:22:05.793755+00:00"
     }
   ]
 }
