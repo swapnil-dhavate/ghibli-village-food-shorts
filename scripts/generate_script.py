@@ -126,7 +126,13 @@ CRITICAL image_prompt RULES -- the image generator only reliably renders roughly
    over rare or compound scenes (e.g. avoid "a king signing a treaty while soldiers march
    past in the background" -- pick one simple visual moment instead, like "a king signing a
    scroll at a wooden table"). Simpler single-subject prompts render far more reliably than
-   busy multi-element ones on this free image backend.
+   busy multi-element ones on this free image backend. In particular, AVOID scenes of someone
+   pulling/dragging/hauling a heavy object (a sledge, cart, boat, or block under tension) --
+   verified directly that this specific action has a very low render-match rate on this free
+   backend, however central it is to the topic. Use a static alternative instead: the object
+   already in place being worked on (e.g. "workers lowering a stone block into position with
+   ropes" or "a stone block resting on a wooden sledge beside a river"), not the pulling
+   motion itself.
 5. End with at most one short clause for setting/atmosphere (e.g. "at sunset over stone
    ruins") -- do not list camera angle, negative prompts, or long style adjective lists.
 Every image_prompt must still be fully independent (never say "same as previous scene").

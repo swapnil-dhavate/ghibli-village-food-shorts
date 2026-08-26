@@ -18,7 +18,11 @@ from generate_images import generate_all_images
 from assemble_video import assemble
 
 ROOT = Path(__file__).resolve().parent.parent
-MAX_ATTEMPTS = 3
+# Bumped 3->5 after observing a real run where the same underlying scene concept (a person
+# pulling/dragging a heavy sledge) failed vision QC identically on 3/3 attempts in a row --
+# 3 wasn't always enough headroom. ~3.5min per failed attempt observed, so 5 attempts stays
+# comfortably inside the 90-minute workflow timeout even in the worst case.
+MAX_ATTEMPTS = 5
 
 
 def generate_video(topic, config, work_dir, run_id):
