@@ -4,7 +4,8 @@
     "great_wall_china",
     "why_sky_is_blue",
     "mariana_trench",
-    "egyptian_pyramids"
+    "egyptian_pyramids",
+    "oldest_tree"
   ],
   "history": [
     {
@@ -30,6 +31,12 @@
       "title": "How the Egyptian Pyramids Were Built",
       "cycle": 1,
       "picked_at": "2026-08-26T04:22:05.793755+00:00"
+    },
+    {
+      "id": "oldest_tree",
+      "title": "The World's Oldest Living Tree",
+      "cycle": 1,
+      "picked_at": "2026-08-27T14:31:17.797811+00:00"
     }
   ]
 }
