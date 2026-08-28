@@ -5,7 +5,8 @@
     "why_sky_is_blue",
     "mariana_trench",
     "egyptian_pyramids",
-    "oldest_tree"
+    "oldest_tree",
+    "why_cats_purr"
   ],
   "history": [
     {
@@ -37,6 +38,12 @@
       "title": "The World's Oldest Living Tree",
       "cycle": 1,
       "picked_at": "2026-08-27T14:31:17.797811+00:00"
+    },
+    {
+      "id": "why_cats_purr",
+      "title": "Why Cats Purr",
+      "cycle": 1,
+      "picked_at": "2026-08-28T15:36:37.611196+00:00"
     }
   ]
 }
