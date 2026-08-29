@@ -6,7 +6,8 @@
     "mariana_trench",
     "egyptian_pyramids",
     "oldest_tree",
-    "why_cats_purr"
+    "why_cats_purr",
+    "lost_city_atlantis"
   ],
   "history": [
     {
@@ -44,6 +45,12 @@
       "title": "Why Cats Purr",
       "cycle": 1,
       "picked_at": "2026-08-28T15:36:37.611196+00:00"
+    },
+    {
+      "id": "lost_city_atlantis",
+      "title": "The Legend of Atlantis",
+      "cycle": 1,
+      "picked_at": "2026-08-29T10:21:25.661808+00:00"
     }
   ]
 }
