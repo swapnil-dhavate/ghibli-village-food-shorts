@@ -7,7 +7,8 @@
     "egyptian_pyramids",
     "oldest_tree",
     "why_cats_purr",
-    "lost_city_atlantis"
+    "lost_city_atlantis",
+    "how_bees_make_honey"
   ],
   "history": [
     {
@@ -51,6 +52,12 @@
       "title": "The Legend of Atlantis",
       "cycle": 1,
       "picked_at": "2026-08-29T10:21:25.661808+00:00"
+    },
+    {
+      "id": "how_bees_make_honey",
+      "title": "How Bees Make Honey",
+      "cycle": 1,
+      "picked_at": "2026-08-30T09:26:11.409530+00:00"
     }
   ]
 }
