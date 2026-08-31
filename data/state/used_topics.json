@@ -8,7 +8,8 @@
     "oldest_tree",
     "why_cats_purr",
     "lost_city_atlantis",
-    "how_bees_make_honey"
+    "how_bees_make_honey",
+    "northern_lights"
   ],
   "history": [
     {
@@ -58,6 +59,12 @@
       "title": "How Bees Make Honey",
       "cycle": 1,
       "picked_at": "2026-08-30T09:26:11.409530+00:00"
+    },
+    {
+      "id": "northern_lights",
+      "title": "What Causes the Northern Lights",
+      "cycle": 1,
+      "picked_at": "2026-08-31T10:01:53.213648+00:00"
     }
   ]
 }
