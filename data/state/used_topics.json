@@ -10,7 +10,8 @@
     "lost_city_atlantis",
     "how_bees_make_honey",
     "northern_lights",
-    "roman_aqueducts"
+    "roman_aqueducts",
+    "why_we_dream"
   ],
   "history": [
     {
@@ -72,6 +73,12 @@
       "title": "Ancient Rome's Aqueducts",
       "cycle": 1,
       "picked_at": "2026-09-01T08:52:45.373802+00:00"
+    },
+    {
+      "id": "why_we_dream",
+      "title": "Why We Dream",
+      "cycle": 1,
+      "picked_at": "2026-09-02T08:05:56.860710+00:00"
     }
   ]
 }
