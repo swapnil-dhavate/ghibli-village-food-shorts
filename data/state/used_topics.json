@@ -11,7 +11,8 @@
     "how_bees_make_honey",
     "northern_lights",
     "roman_aqueducts",
-    "why_we_dream"
+    "why_we_dream",
+    "bermuda_triangle"
   ],
   "history": [
     {
@@ -79,6 +80,12 @@
       "title": "Why We Dream",
       "cycle": 1,
       "picked_at": "2026-09-02T08:05:56.860710+00:00"
+    },
+    {
+      "id": "bermuda_triangle",
+      "title": "The Mystery of the Bermuda Triangle",
+      "cycle": 1,
+      "picked_at": "2026-09-05T07:50:41.211852+00:00"
     }
   ]
 }
