@@ -12,7 +12,8 @@
     "northern_lights",
     "roman_aqueducts",
     "why_we_dream",
-    "bermuda_triangle"
+    "bermuda_triangle",
+    "how_volcanoes_form"
   ],
   "history": [
     {
@@ -86,6 +87,12 @@
       "title": "The Mystery of the Bermuda Triangle",
       "cycle": 1,
       "picked_at": "2026-09-05T07:50:41.211852+00:00"
+    },
+    {
+      "id": "how_volcanoes_form",
+      "title": "How Volcanoes Form",
+      "cycle": 1,
+      "picked_at": "2026-09-06T08:05:00.825147+00:00"
     }
   ]
 }
