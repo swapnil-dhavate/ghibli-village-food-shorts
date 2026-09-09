@@ -14,7 +14,8 @@
     "why_we_dream",
     "bermuda_triangle",
     "how_volcanoes_form",
-    "great_barrier_reef"
+    "great_barrier_reef",
+    "viking_ships"
   ],
   "history": [
     {
@@ -100,6 +101,12 @@
       "title": "The Great Barrier Reef",
       "cycle": 1,
       "picked_at": "2026-09-08T08:18:02.800638+00:00"
+    },
+    {
+      "id": "viking_ships",
+      "title": "How Viking Longships Conquered the Seas",
+      "cycle": 1,
+      "picked_at": "2026-09-09T08:21:40.740517+00:00"
     }
   ]
 }
