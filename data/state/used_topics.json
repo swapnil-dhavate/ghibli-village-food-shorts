@@ -16,7 +16,8 @@
     "how_volcanoes_form",
     "great_barrier_reef",
     "viking_ships",
-    "octopus_three_hearts"
+    "octopus_three_hearts",
+    "sahara_hidden_rivers"
   ],
   "history": [
     {
@@ -114,6 +115,12 @@
       "title": "Why Octopuses Have Three Hearts",
       "cycle": 1,
       "picked_at": "2026-09-10T08:21:18.698315+00:00"
+    },
+    {
+      "id": "sahara_hidden_rivers",
+      "title": "The Sahara's Hidden Ancient Rivers",
+      "cycle": 1,
+      "picked_at": "2026-09-11T08:16:02.547187+00:00"
     }
   ]
 }
