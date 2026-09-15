@@ -17,7 +17,8 @@
     "great_barrier_reef",
     "viking_ships",
     "octopus_three_hearts",
-    "sahara_hidden_rivers"
+    "sahara_hidden_rivers",
+    "monarch_migration"
   ],
   "history": [
     {
@@ -121,6 +122,12 @@
       "title": "The Sahara's Hidden Ancient Rivers",
       "cycle": 1,
       "picked_at": "2026-09-11T08:16:02.547187+00:00"
+    },
+    {
+      "id": "monarch_migration",
+      "title": "The Incredible Migration of Monarch Butterflies",
+      "cycle": 1,
+      "picked_at": "2026-09-15T08:55:34.271376+00:00"
     }
   ]
 }
